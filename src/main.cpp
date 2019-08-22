@@ -1,25 +1,29 @@
 #include <ncurses.h>
 
-#include "ui_main.hpp"
+#include "game_engine.hpp"
 
 void main_loop()
 {
-    ui_main game;
-    bool main_loop = true;
-    while (main_loop)
+    game_engine engine;
+    while (engine.running())
     {
-        int key = getch();
-        if (key == 'q')
-            main_loop = false;
-
-        game.draw();
+        // int key = getch();
+        int key = 5;
+        if (key != ERR)
+            engine.handle_input(key);
+        engine.draw();
     }
 }
+
+#include <stdio.h>
 
 int main()
 {
     // init screen and clean it
-    initscr();
+    auto win = initscr();
+    if (win == nullptr)
+        return -1;
+    refresh();
     noecho();
     // cbreak();
     keypad(stdscr, true);
