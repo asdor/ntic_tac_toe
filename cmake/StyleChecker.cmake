@@ -27,8 +27,6 @@ if(NOT CLANG_FORMAT)
     message(SEND_ERROR "clang-format not found")
 endif()
 
-message("------------------${CMAKE_SOURCE_DIR}")
-
 set(SEARCH_PATHS "${CMAKE_SOURCE_DIR}:${CMAKE_SOURCE_DIR}/src:..:../include")
 
 set(CMAKE_CXX_CPPLINT ${CMAKE_COMMAND} "-DEXE=${CLANG_FORMAT}" "-DSEARCH_PATHS=${SEARCH_PATHS}" -DINPLACE=${CPPLINT_INPLACE} -P ${CMAKE_CURRENT_LIST_DIR}/cpplint.cmake)

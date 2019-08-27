@@ -6,6 +6,21 @@
 
 #include "main_menu_state.hpp"
 
+// struct stub_class
+// {
+//     stub_class()
+//     {
+//     }
+
+//     void handle_input(int /*key*/, game_engine& /*engine*/)
+//     {
+//     }
+
+//     void draw()
+//     {
+//     }
+// };
+
 class game_engine
 {
 public:
@@ -17,6 +32,8 @@ public:
     {
         state_.emplace<T>(std::forward<Args>(args)...);
     }
+
+    int get_char();
 
     void handle_input(int key);
 

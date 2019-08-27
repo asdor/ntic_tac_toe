@@ -7,25 +7,19 @@ void main_loop()
     game_engine engine;
     while (engine.running())
     {
-        // int key = getch();
-        int key = 5;
+        int key = engine.get_char();
         if (key != ERR)
             engine.handle_input(key);
+
         engine.draw();
     }
 }
 
-#include <stdio.h>
-
 int main()
 {
-    // init screen and clean it
-    auto win = initscr();
-    if (win == nullptr)
-        return -1;
+    initscr();
     refresh();
     noecho();
-    // cbreak();
     keypad(stdscr, true);
 
     halfdelay(1);

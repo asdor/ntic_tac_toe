@@ -3,40 +3,49 @@
 
 #include <algorithm>
 #include <array>
-#include <ncurses.h>
+#include <memory>
 #include <string>
+
+#include <ncurses.h>
 
 template<size_t N>
 class dialog_box
 {
 public:
+    using window_type_ = std::unique_ptr<WINDOW, decltype(&delwin)>;
     dialog_box(const std::string& title, const std::array<std::string, N>& choices)
-        : title_(title), choices_(choices), dialog_window_(nullptr), highlight_(0), scr(stdscr)
+        : title_(title), choices_(choices), dialog_window_(nullptr, delwin), highlight_(0), win_height_(0), win_width_(0)
     {
         int y_max = 0;
         int x_max = 0;
         getmaxyx(stdscr, y_max, x_max);
 
-        // const size_t max_width = get_max_width();
-        // const size_t height = N + 4;
-        // const size_t width = max_width + 2;
+        const size_t max_width = get_max_width();
+        win_height_ = N + 4;
+        win_width_ = max_width + 4;
 
-        // dialog_window_ = newwin(height, width, y_max / 2 - height / 2, x_max / 2 - width / 2);
-        dialog_window_ = newwin(6, x_max - 12, y_max - 8, 5);
-        refresh();
-        box(dialog_window_, 0, 0);
-        wrefresh(dialog_window_);
+        dialog_window_ = window_type_(newwin(win_height_, win_width_, y_max / 2 - win_height_ / 2, x_max / 2 - win_width_ / 2), delwin);
+        draw_items();
+        curs_set(0);
+    }
+
+    int get_char()
+    {
+        return wgetch(dialog_window_.get());
     }
 
     int handle_input(int key)
     {
         switch (key)
         {
-            case KEY_DOWN:
-                next_choice();
+            case 'S':
+            case 's':
+                highlight_ = wrap(highlight_ + 1, 0, N - 1);
                 break;
-            case KEY_UP:
-                prev_choice();
+            case 'W':
+            case 'w':
+                highlight_ = wrap(highlight_ - 1, 0, N - 1);
+                break;
             case KEY_ENTER:
                 return highlight_;
             default:
@@ -48,24 +57,41 @@ public:
 
     void draw()
     {
-        // mvwprintw(dialog_window_, 0, 0, "lala");
-        wclear(dialog_window_);
-        // box(dialog_window_, 0, 0);
-        wrefresh(dialog_window_);
-    }
+        for (size_t i = 0; i < N; ++i)
+        {
+            if (i == highlight_)
+                wattron(dialog_window_.get(), A_REVERSE);
+            else
+                wattroff(dialog_window_.get(), A_REVERSE);
 
-    ~dialog_box()
-    {
-        delwin(dialog_window_);
+            mvwprintw(dialog_window_.get(), i + 3, 2, choices_[i].c_str());
+        }
     }
 
 private:
-    void next_choice()
+    void print_in_center(size_t y0, const std::string& str)
     {
+        const size_t pos = (win_width_ - str.size()) / 2;
+        mvwprintw(dialog_window_.get(), y0, pos, str.c_str());
     }
 
-    void prev_choice()
+    void draw_items()
     {
+        box(dialog_window_.get(), 0, 0);
+
+        mvwaddch(dialog_window_.get(), 2, 0, ACS_LTEE);
+        mvwaddch(dialog_window_.get(), 2, win_width_ - 1, ACS_RTEE);
+        for (size_t i = 0; i < win_width_ - 2; ++i)
+            mvwaddch(dialog_window_.get(), 2, i + 1, ACS_HLINE);
+
+        print_in_center(1, title_);
+
+        for (size_t i = 0; i < N; ++i)
+        {
+            mvwaddch(dialog_window_.get(), i + 3, 1, ' ');
+            mvwprintw(dialog_window_.get(), i + 3, 2, choices_[i].c_str());
+            mvwaddch(dialog_window_.get(), i + 3, choices_[i].size() + 2, ' ');
+        }
     }
 
     size_t get_max_width() const
@@ -78,12 +104,22 @@ private:
         return max_str.size();
     }
 
+    static size_t wrap(int key, size_t min_val, size_t max_val)
+    {
+        if (key > static_cast<int>(max_val))
+            return min_val;
+        else if (key < static_cast<int>(min_val))
+            return max_val;
+        else
+            return static_cast<size_t>(key);
+    }
+
     std::string title_;
     std::array<std::string, N> choices_;
-    WINDOW* dialog_window_;
-    int highlight_;
-
-    WINDOW* scr;
+    std::unique_ptr<WINDOW, decltype(&delwin)> dialog_window_;
+    size_t highlight_;
+    size_t win_height_;
+    size_t win_width_;
 };
 
 #endif // __DIALOG_BOX_HPP__
