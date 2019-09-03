@@ -3,31 +3,31 @@
 
 #include "game_engine.hpp"
 
-game_engine::game_engine() : state_(std::in_place_type<main_menu_state>), is_running_(true)
+GameEngine::GameEngine() : state_(std::in_place_type<MainMenuState>), is_running_(true)
 {
 }
 
-int game_engine::get_char()
+int GameEngine::get_char()
 {
     return std::visit([](auto&& state) { return state.get_char(); }, state_);
 }
 
-void game_engine::handle_input(int key)
+void GameEngine::handle_input(int key)
 {
     std::visit([key, this](auto&& state) { state.handle_input(key, *this); }, state_);
 }
 
-void game_engine::draw()
+void GameEngine::draw()
 {
     std::visit([](auto&& state) { state.draw(); }, state_);
 }
 
-bool game_engine::running() const
+bool GameEngine::running() const
 {
     return is_running_;
 }
 
-void game_engine::quit()
+void GameEngine::quit()
 {
     is_running_ = false;
 }

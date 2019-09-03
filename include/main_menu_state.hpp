@@ -2,17 +2,16 @@
 #define __MAIN_MENU_STATE_HPP__
 
 #include "dialog_box.hpp"
+// #include "game_engine_fwd.hpp"
 
-class game_engine;
+class GameEngine;
 
-struct main_menu_state : dialog_box<3>
+struct MainMenuState : dialog_box<3>
 {
     using base_type = dialog_box<3>;
-    main_menu_state();
+    MainMenuState();
 
-    void handle_input(int key, game_engine& engine);
-
-    void draw();
+    void handle_input(int key, GameEngine& engine);
 };
 
 #endif // __MAIN_MENU_STATE_HPP__

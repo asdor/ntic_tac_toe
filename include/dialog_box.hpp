@@ -8,6 +8,8 @@
 
 #include <ncurses.h>
 
+#include <iostream>
+
 template<size_t N>
 class dialog_box
 {
@@ -25,8 +27,11 @@ public:
         win_width_ = max_width + 4;
 
         dialog_window_ = window_type_(newwin(win_height_, win_width_, y_max / 2 - win_height_ / 2, x_max / 2 - win_width_ / 2), delwin);
+        clear();
+        refresh();
         draw_items();
         curs_set(0);
+        keypad(dialog_window_.get(), true);
     }
 
     int get_char()
@@ -46,7 +51,7 @@ public:
             case 'w':
                 highlight_ = wrap(highlight_ - 1, 0, N - 1);
                 break;
-            case KEY_ENTER:
+            case 10:
                 return highlight_;
             default:
                 break;
@@ -99,7 +104,6 @@ private:
         auto comp = [](const std::string& s1, const std::string& s2) { return s1.size() < s2.size(); };
 
         const auto max_from_choice = std::max_element(choices_.begin(), choices_.end(), comp);
-
         const std::string max_str = std::max(title_, *max_from_choice, comp);
         return max_str.size();
     }

@@ -4,7 +4,7 @@
 
 void main_loop()
 {
-    game_engine engine;
+    GameEngine engine;
     while (engine.running())
     {
         int key = engine.get_char();

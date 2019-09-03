@@ -4,6 +4,7 @@
 #include <utility>
 #include <variant>
 
+#include "choose_side_state.hpp"
 #include "main_menu_state.hpp"
 
 // struct stub_class
@@ -21,12 +22,12 @@
 //     }
 // };
 
-class game_engine
+class GameEngine
 {
 public:
-    game_engine();
+    GameEngine();
 
-    using state_type = std::variant<main_menu_state>;
+    using state_type = std::variant<MainMenuState, SideChoiceState>;
     template<class T, class... Args>
     void set_state(Args&&... args)
     {
