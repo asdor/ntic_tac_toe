@@ -17,7 +17,7 @@ include(cmake/StyleChecker.cmake)
 
 add_executable(${PROJECT_NAME} src/main.cpp)
 
-file(GLOB SRC src/*.cpp)
+file(GLOB SRC src/*.cpp src/game/*.cpp)
 add_library(${PROJECT_NAME}-lib ${SRC})
 
 target_include_directories(${PROJECT_NAME}-lib PUBLIC ${NCURSES_HEADERS} include)

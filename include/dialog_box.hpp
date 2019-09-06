@@ -14,7 +14,6 @@ template<size_t N>
 class dialog_box
 {
 public:
-    using window_type_ = std::unique_ptr<WINDOW, decltype(&delwin)>;
     dialog_box(const std::string& title, const std::array<std::string, N>& choices)
         : title_(title), choices_(choices), dialog_window_(nullptr, delwin), highlight_(0), win_height_(0), win_width_(0)
     {
@@ -83,12 +82,6 @@ private:
     void draw_items()
     {
         box(dialog_window_.get(), 0, 0);
-
-        // mvwaddch(dialog_window_.get(), 2, 0, ACS_LTEE);
-        // mvwaddch(dialog_window_.get(), 2, win_width_ - 1, ACS_RTEE);
-
-        // wmove(dialog_window_.get(), 2, 1);
-        // whline(dialog_window_.get(), ACS_HLINE, win_width_ - 2);
 
         draw_horz_line(dialog_window_.get(), 2, 0, win_width_, ACS_HLINE, ACS_LTEE, ACS_RTEE);
 

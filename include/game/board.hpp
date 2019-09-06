@@ -12,7 +12,7 @@
 class GameBoard
 {
 public:
-    GameBoard() : board_({PlayerMark::EMPTY_MARK}), score_{{PlayerMark::X_MARK, 0}, {PlayerMark::O_MARK, 0}}, is_end_(false), message_("X turn")
+    GameBoard() : score_{{PlayerMark::X_MARK, 0}, {PlayerMark::O_MARK, 103}}, message_("X turn"), board_({PlayerMark::EMPTY_MARK}), is_end_(false)
     {
 
     }
@@ -24,6 +24,16 @@ public:
 
         board_[pos] = mark;
         return true;
+    }
+
+    const std::map<PlayerMark, size_t>& get_score() const
+    {
+        return score_;
+    }
+
+    const std::string& get_message() const
+    {
+        return message_;
     }
 
     const std::array<PlayerMark, 9>& get_board() const
@@ -112,9 +122,9 @@ private:
         return false;
     }
 
-    std::array<PlayerMark, 9> board_;
-    std::string message_;
     std::map<PlayerMark, size_t> score_;
+    std::string message_;
+    std::array<PlayerMark, 9> board_;
 
     bool is_end_;
 };

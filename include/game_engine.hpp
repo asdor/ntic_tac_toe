@@ -5,29 +5,15 @@
 #include <variant>
 
 #include "choose_side_state.hpp"
+#include "game/game_state.hpp"
 #include "main_menu_state.hpp"
-
-// struct stub_class
-// {
-//     stub_class()
-//     {
-//     }
-
-//     void handle_input(int /*key*/, game_engine& /*engine*/)
-//     {
-//     }
-
-//     void draw()
-//     {
-//     }
-// };
 
 class GameEngine
 {
 public:
     GameEngine();
 
-    using state_type = std::variant<MainMenuState, SideChoiceState>;
+    using state_type = std::variant<MainMenuState, SideChoiceState, GameState>;
     template<class T, class... Args>
     void set_state(Args&&... args)
     {

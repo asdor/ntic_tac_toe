@@ -23,6 +23,7 @@ void MainMenuState::handle_input(int key, GameEngine& engine)
             break;
         case 1:
             /* code */
+            engine.set_state<GameState>();
             break;
         case 2:
             engine.quit();

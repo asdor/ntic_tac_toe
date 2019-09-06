@@ -28,3 +28,12 @@ void draw_horz_line(WINDOW* win, size_t y0, size_t x0, size_t ncolumns, int c_ch
     wmove(win, y0, x0 + 1);
     whline(win, c_ch, ncolumns - 2);
 }
+
+void draw_vert_line(WINDOW* win, size_t y0, size_t x0, size_t nrows, int c_ch, int b_ch, int t_ch)
+{
+    mvwaddch(win, y0, x0, t_ch);
+    mvwaddch(win, nrows - 1, x0, b_ch);
+
+    wmove(win, y0 + 1, x0);
+    wvline(win, c_ch, nrows - 2);
+}
