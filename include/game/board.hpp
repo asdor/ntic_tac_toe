@@ -4,18 +4,15 @@
 #include <array>
 #include <algorithm>
 #include <vector>
+#include <string>
+#include <map>
 
-enum class PlayerMark
-{
-    EMPTY_MARK = 0,
-    X_MARK,
-    O_MARK
-};
+#include "common.hpp"
 
 class GameBoard
 {
 public:
-    GameBoard() : board_({PlayerMark::EMPTY_MARK})
+    GameBoard() : board_({PlayerMark::EMPTY_MARK}), score_{{PlayerMark::X_MARK, 0}, {PlayerMark::O_MARK, 0}}, is_end_(false), message_("X turn")
     {
 
     }
@@ -46,6 +43,26 @@ public:
         return positions;
     }
 
+    bool make_move(size_t pos, PlayerMark mark)
+    {
+        if (!set_mark(pos, mark))
+            return false;
+
+        if (is_win())
+        {
+            message_ = mark_to_string(mark) + " win";
+            ++score_[mark];
+            is_end_ = true;
+        }
+        else if (is_draw())
+        {
+            message_ = "Draw";
+            is_end_ = true;
+        }
+
+        return is_end_ == false;
+    }
+
     bool is_win() const
     {
         if (is_equal_marks(1) || is_equal_marks(3))
@@ -67,6 +84,17 @@ public:
         });
     }
 
+    bool is_end() const
+    {
+        return is_end_;
+    }
+
+    void new_round()
+    {
+        board_.fill(PlayerMark::EMPTY_MARK);
+        is_end_ = false;
+    }
+
 private:
     bool check_three(size_t ind0, size_t ind1, size_t ind2) const
     {
@@ -85,6 +113,10 @@ private:
     }
 
     std::array<PlayerMark, 9> board_;
+    std::string message_;
+    std::map<PlayerMark, size_t> score_;
+
+    bool is_end_;
 };
 
 #endif // __BOARD_HPP__

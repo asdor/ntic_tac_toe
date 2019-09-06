@@ -11,8 +11,7 @@ SideChoiceState::SideChoiceState(PlayerSide side) : base_type("Choose side", {"X
 void SideChoiceState::handle_input(int key, GameEngine& engine)
 {
     if (key == 'q')
-    {
-        engine.quit();
-    }
+        engine.set_state<MainMenuState>();
+
     base_type::handle_input(key);
 }

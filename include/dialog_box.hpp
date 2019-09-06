@@ -6,9 +6,9 @@
 #include <memory>
 #include <string>
 
-#include <ncurses.h>
+#include "common.hpp"
 
-#include <iostream>
+#include <ncurses.h>
 
 template<size_t N>
 class dialog_box
@@ -84,19 +84,18 @@ private:
     {
         box(dialog_window_.get(), 0, 0);
 
-        mvwaddch(dialog_window_.get(), 2, 0, ACS_LTEE);
-        mvwaddch(dialog_window_.get(), 2, win_width_ - 1, ACS_RTEE);
-        for (size_t i = 0; i < win_width_ - 2; ++i)
-            mvwaddch(dialog_window_.get(), 2, i + 1, ACS_HLINE);
+        // mvwaddch(dialog_window_.get(), 2, 0, ACS_LTEE);
+        // mvwaddch(dialog_window_.get(), 2, win_width_ - 1, ACS_RTEE);
+
+        // wmove(dialog_window_.get(), 2, 1);
+        // whline(dialog_window_.get(), ACS_HLINE, win_width_ - 2);
+
+        draw_horz_line(dialog_window_.get(), 2, 0, win_width_, ACS_HLINE, ACS_LTEE, ACS_RTEE);
 
         print_in_center(1, title_);
 
         for (size_t i = 0; i < N; ++i)
-        {
-            mvwaddch(dialog_window_.get(), i + 3, 1, ' ');
             mvwprintw(dialog_window_.get(), i + 3, 2, choices_[i].c_str());
-            mvwaddch(dialog_window_.get(), i + 3, choices_[i].size() + 2, ' ');
-        }
     }
 
     size_t get_max_width() const
@@ -120,7 +119,7 @@ private:
 
     std::string title_;
     std::array<std::string, N> choices_;
-    std::unique_ptr<WINDOW, decltype(&delwin)> dialog_window_;
+    window_type_ dialog_window_;
     size_t highlight_;
     size_t win_height_;
     size_t win_width_;
