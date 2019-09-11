@@ -83,7 +83,7 @@ private:
     {
         box(dialog_window_.get(), 0, 0);
 
-        draw_horz_line(dialog_window_.get(), 2, 0, win_width_, ACS_HLINE, ACS_LTEE, ACS_RTEE);
+        draw_horz_line(dialog_window_.get(), 2, 0, win_width_, ACS_LTEE, ACS_HLINE, ACS_RTEE);
 
         print_in_center(1, title_);
 
@@ -98,16 +98,6 @@ private:
         const auto max_from_choice = std::max_element(choices_.begin(), choices_.end(), comp);
         const std::string max_str = std::max(title_, *max_from_choice, comp);
         return max_str.size();
-    }
-
-    static size_t wrap(int key, size_t min_val, size_t max_val)
-    {
-        if (key > static_cast<int>(max_val))
-            return min_val;
-        else if (key < static_cast<int>(min_val))
-            return max_val;
-        else
-            return static_cast<size_t>(key);
     }
 
     std::string title_;

@@ -25,6 +25,8 @@ private:
     GameBoard game_board_;
     window_type_ message_box_;
     window_type_ board_box_;
+    size_t cursor_pos_y;
+    size_t cursor_pos_x;
 };
 
 #endif // __GAME_STATE_HPP__

@@ -12,7 +12,7 @@
 class GameBoard
 {
 public:
-    GameBoard() : score_{{PlayerMark::X_MARK, 0}, {PlayerMark::O_MARK, 103}}, message_("X turn"), board_({PlayerMark::EMPTY_MARK}), is_end_(false)
+    GameBoard() : score_{{PlayerMark::X_MARK, 0}, {PlayerMark::O_MARK, 0}}, message_("X turn"), board_({PlayerMark::EMPTY_MARK}), is_end_(false)
     {
 
     }
@@ -26,9 +26,9 @@ public:
         return true;
     }
 
-    const std::map<PlayerMark, size_t>& get_score() const
+    size_t get_score(PlayerMark mark) const
     {
-        return score_;
+        return score_.at(mark);
     }
 
     const std::string& get_message() const
