@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <utility>
 
 #include "game/game_state.hpp"
 #include "game_engine.hpp"
@@ -14,7 +15,20 @@ constexpr size_t full_board_height = message_box_height + board_height;
 constexpr size_t board_stride_y = cell_height + 1;
 constexpr size_t board_stride_x = cell_width + 1;
 
-GameState::GameState() : message_box_(nullptr, delwin), board_box_(nullptr, delwin), cursor_pos_y(0), cursor_pos_x(0)
+GameState::GameState()
+    : game_type_(std::in_place_type<PvP_Type>), message_box_(nullptr, delwin), board_box_(nullptr, delwin), cursor_pos_y(0), cursor_pos_x(0)
+{
+    init_game_state();
+}
+
+GameState::GameState(PlayerMark mark)
+    : game_type_(std::in_place_type<PvAI_Type>, mark), message_box_(nullptr, delwin), board_box_(nullptr, delwin), cursor_pos_y(0), cursor_pos_x(0)
+{
+    init_game_state();
+    std::visit([this](auto& st) { st.reset(game_board_); }, game_type_);
+}
+
+void GameState::init_game_state()
 {
     int y_max = 0;
     int x_max = 0;
@@ -26,22 +40,29 @@ GameState::GameState() : message_box_(nullptr, delwin), board_box_(nullptr, delw
     message_box_ = window_type_(newwin(message_box_height, board_width, pos_y, pos_x), delwin);
     board_box_ = window_type_(newwin(board_height, board_width, pos_y + message_box_height, pos_x), delwin);
     curs_set(1);
-
-    game_board_.set_mark(0, PlayerMark::X_MARK);
-    game_board_.set_mark(1, PlayerMark::O_MARK);
-    game_board_.set_mark(4, PlayerMark::X_MARK);
-    game_board_.set_mark(8, PlayerMark::X_MARK);
-    // game_board_.set_mark(0, PlayerMark::X_MARK);
-    // game_board_.set_mark(0, PlayerMark::X_MARK);
 }
 
 void GameState::handle_input(int key, GameEngine& engine)
 {
-    if (key == 'q')
-        engine.quit();
+    if (key == 10)
+    {
+        if (game_board_.is_end())
+        {
+            game_board_.new_round();
+            std::visit([this](auto& st) { st.reset(game_board_); }, game_type_);
+        }
+        else
+        {
+            std::visit([this](auto& g_type) { g_type.on_enter(game_board_, cursor_pos_y * 3 + cursor_pos_x); }, game_type_);
+        }
+        return;
+    }
 
     switch (key)
     {
+        case 'q':
+            engine.quit();
+            break;
         case 'w':
         case 'W':
             cursor_pos_y = wrap(cursor_pos_y - 1, 0, 2);
@@ -121,8 +142,8 @@ void GameState::draw_board_box()
     {
         for (size_t j = 0, x_pos = cell_width / 2 + 1; j < 3; ++j, x_pos += board_stride_x)
         {
-            char mark = mark_to_string(board[i * 3 + j]);
-            mvwaddch(board_box_.get(), y_pos, x_pos, mark);
+            const std::string mark = mark_to_string(board[i * 3 + j]);
+            mvwaddch(board_box_.get(), y_pos, x_pos, mark[0]);
         }
     }
 }

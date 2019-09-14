@@ -1,13 +1,13 @@
 #include "common.hpp"
 
-char mark_to_string(PlayerMark mark)
+std::string mark_to_string(PlayerMark mark)
 {
     if (mark == PlayerMark::EMPTY_MARK)
-        return ' ';
+        return " ";
     else if (mark == PlayerMark::X_MARK)
-        return 'X';
+        return "X";
     else
-        return 'O';
+        return "O";
 }
 
 PlayerMark next_mark(PlayerMark mark)

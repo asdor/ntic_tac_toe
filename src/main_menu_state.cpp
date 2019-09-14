@@ -1,8 +1,8 @@
 #include "main_menu_state.hpp"
 #include "choose_side_state.hpp"
 #include "dialog_box.hpp"
+#include "game/game_type.hpp"
 #include "game_engine.hpp"
-#include "player_side.hpp"
 
 #include <ncurses.h>
 
@@ -19,10 +19,9 @@ void MainMenuState::handle_input(int key, GameEngine& engine)
     switch (resp)
     {
         case 0:
-            engine.set_state<SideChoiceState>(PlayerSide::PLAYER_X);
+            engine.set_state<SideChoiceState>();
             break;
         case 1:
-            /* code */
             engine.set_state<GameState>();
             break;
         case 2:

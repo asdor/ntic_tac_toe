@@ -12,7 +12,7 @@ enum class PlayerMark
     O_MARK = 2
 };
 
-char mark_to_string(PlayerMark mark);
+std::string mark_to_string(PlayerMark mark);
 
 PlayerMark next_mark(PlayerMark mark);
 

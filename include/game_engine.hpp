@@ -6,6 +6,7 @@
 
 #include "choose_side_state.hpp"
 #include "game/game_state.hpp"
+#include "game/game_type.hpp"
 #include "main_menu_state.hpp"
 
 class GameEngine
