@@ -3,6 +3,7 @@
 
 #include "game/game_state.hpp"
 #include "game_engine.hpp"
+#include "pause_state.hpp"
 
 constexpr size_t cell_height = 3;
 constexpr size_t cell_width = 7;
@@ -39,7 +40,6 @@ void GameState::init_game_state()
 
     message_box_ = window_type_(newwin(message_box_height, board_width, pos_y, pos_x), delwin);
     board_box_ = window_type_(newwin(board_height, board_width, pos_y + message_box_height, pos_x), delwin);
-    curs_set(1);
 }
 
 void GameState::handle_input(int key, GameEngine& engine)
@@ -61,7 +61,7 @@ void GameState::handle_input(int key, GameEngine& engine)
     switch (key)
     {
         case 'q':
-            engine.quit();
+            engine.save_and_set_state<PauseState>();
             break;
         case 'w':
         case 'W':
@@ -97,6 +97,7 @@ void GameState::draw()
     draw_message_box();
     draw_board_box();
     wmove(board_box_.get(), cell_height / 2 + 1 + cursor_pos_y * board_stride_y, cell_width / 2 + 1 + cursor_pos_x * board_stride_x);
+    curs_set(1);
 }
 
 void GameState::draw_message_box()

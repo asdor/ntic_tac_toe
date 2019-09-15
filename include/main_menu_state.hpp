@@ -2,7 +2,6 @@
 #define __MAIN_MENU_STATE_HPP__
 
 #include "dialog_box.hpp"
-// #include "game_engine_fwd.hpp"
 
 class GameEngine;
 

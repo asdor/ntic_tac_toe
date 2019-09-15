@@ -4,8 +4,6 @@
 #include "game/game_type.hpp"
 #include "game_engine.hpp"
 
-#include <ncurses.h>
-
 MainMenuState::MainMenuState() : base_type("Main menu", {"Player vs Player", "Player vs AI", "Exit"})
 {
 }

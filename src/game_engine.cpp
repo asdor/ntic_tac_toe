@@ -3,23 +3,29 @@
 
 #include "game_engine.hpp"
 
-GameEngine::GameEngine() : state_(std::in_place_type<MainMenuState>), is_running_(true)
+GameEngine::GameEngine() : cur_state_(std::in_place_type<MainMenuState>), prev_state_(std::nullopt), is_running_(true)
 {
+}
+
+void GameEngine::load_prev_state()
+{
+    cur_state_ = std::move(prev_state_.value());
+    prev_state_ = std::nullopt;
 }
 
 int GameEngine::get_char()
 {
-    return std::visit([](auto&& state) { return state.get_char(); }, state_);
+    return std::visit([](auto&& state) { return state.get_char(); }, cur_state_);
 }
 
 void GameEngine::handle_input(int key)
 {
-    std::visit([key, this](auto&& state) { state.handle_input(key, *this); }, state_);
+    std::visit([key, this](auto&& state) { state.handle_input(key, *this); }, cur_state_);
 }
 
 void GameEngine::draw()
 {
-    std::visit([](auto&& state) { state.draw(); }, state_);
+    std::visit([](auto&& state) { state.draw(); }, cur_state_);
 }
 
 bool GameEngine::running() const
