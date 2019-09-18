@@ -7,11 +7,10 @@ void main_loop()
     GameEngine engine;
     while (engine.running())
     {
+        engine.draw();
         int key = engine.get_char();
         if (key != ERR)
             engine.handle_input(key);
-
-        engine.draw();
     }
 }
 
@@ -22,7 +21,6 @@ int main()
     noecho();
     keypad(stdscr, true);
 
-    halfdelay(1);
     main_loop();
 
     endwin();

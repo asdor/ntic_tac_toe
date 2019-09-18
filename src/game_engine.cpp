@@ -11,6 +11,7 @@ void GameEngine::load_prev_state()
 {
     cur_state_ = std::move(prev_state_.value());
     prev_state_ = std::nullopt;
+    draw_background();
 }
 
 int GameEngine::get_char()
@@ -21,6 +22,11 @@ int GameEngine::get_char()
 void GameEngine::handle_input(int key)
 {
     std::visit([key, this](auto&& state) { state.handle_input(key, *this); }, cur_state_);
+}
+
+void GameEngine::draw_background()
+{
+    std::visit([](auto&& state) { state.draw_background(); }, cur_state_);
 }
 
 void GameEngine::draw()

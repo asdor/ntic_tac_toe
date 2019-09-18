@@ -19,6 +19,7 @@ public:
     GameState(PlayerMark mark);
     void handle_input(int key, GameEngine& engine);
     int get_char();
+    void draw_background();
     void draw();
 
 private:

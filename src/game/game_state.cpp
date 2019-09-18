@@ -40,6 +40,9 @@ void GameState::init_game_state()
 
     message_box_ = window_type_(newwin(message_box_height, board_width, pos_y, pos_x), delwin);
     board_box_ = window_type_(newwin(board_height, board_width, pos_y + message_box_height, pos_x), delwin);
+
+    draw_background();
+    keypad(board_box_.get(), true);
 }
 
 void GameState::handle_input(int key, GameEngine& engine)
@@ -65,18 +68,22 @@ void GameState::handle_input(int key, GameEngine& engine)
             break;
         case 'w':
         case 'W':
+        case KEY_UP:
             cursor_pos_y = wrap(cursor_pos_y - 1, 0, 2);
             break;
         case 's':
         case 'S':
+        case KEY_DOWN:
             cursor_pos_y = wrap(cursor_pos_y + 1, 0, 2);
             break;
         case 'a':
         case 'A':
+        case KEY_LEFT:
             cursor_pos_x = wrap(cursor_pos_x - 1, 0, 2);
             break;
         case 'd':
         case 'D':
+        case KEY_RIGHT:
             cursor_pos_x = wrap(cursor_pos_x + 1, 0, 2);
             break;
         default:
@@ -90,14 +97,28 @@ int GameState::get_char()
     return wgetch(board_box_.get());
 }
 
+void GameState::draw_background()
+{
+    wclear(board_box_.get());
+    draw_board_box();
+    curs_set(1);
+}
+
 void GameState::draw()
 {
     wclear(message_box_.get());
-    wclear(board_box_.get());
     draw_message_box();
-    draw_board_box();
+
+    const auto& board = game_board_.get_board();
+    for (size_t i = 0, y_pos = cell_height / 2 + 1; i < 3; ++i, y_pos += board_stride_y)
+    {
+        for (size_t j = 0, x_pos = cell_width / 2 + 1; j < 3; ++j, x_pos += board_stride_x)
+        {
+            const std::string mark = mark_to_string(board[i * 3 + j]);
+            mvwaddch(board_box_.get(), y_pos, x_pos, mark[0]);
+        }
+    }
     wmove(board_box_.get(), cell_height / 2 + 1 + cursor_pos_y * board_stride_y, cell_width / 2 + 1 + cursor_pos_x * board_stride_x);
-    curs_set(1);
 }
 
 void GameState::draw_message_box()
@@ -137,14 +158,4 @@ void GameState::draw_board_box()
     mvwaddch(board_box_.get(), cell_height + 1, 2 * board_stride_x, ACS_PLUS);
     mvwaddch(board_box_.get(), 2 * board_stride_y, cell_width + 1, ACS_PLUS);
     mvwaddch(board_box_.get(), 2 * board_stride_y, 2 * board_stride_x, ACS_PLUS);
-
-    const auto& board = game_board_.get_board();
-    for (size_t i = 0, y_pos = cell_height / 2 + 1; i < 3; ++i, y_pos += board_stride_y)
-    {
-        for (size_t j = 0, x_pos = cell_width / 2 + 1; j < 3; ++j, x_pos += board_stride_x)
-        {
-            const std::string mark = mark_to_string(board[i * 3 + j]);
-            mvwaddch(board_box_.get(), y_pos, x_pos, mark[0]);
-        }
-    }
 }

@@ -26,11 +26,20 @@ public:
         win_width_ = max_width + 4;
 
         dialog_window_ = window_type_(newwin(win_height_, win_width_, y_max / 2 - win_height_ / 2, x_max / 2 - win_width_ / 2), delwin);
+
+        draw_background();
+        keypad(dialog_window_.get(), true);
+    }
+
+    void draw_background()
+    {
         clear();
         refresh();
-        draw_items();
+
+        box(dialog_window_.get(), 0, 0);
+        draw_horz_line(dialog_window_.get(), 2, 0, win_width_, ACS_LTEE, ACS_HLINE, ACS_RTEE);
+        print_in_center(1, title_);
         curs_set(0);
-        keypad(dialog_window_.get(), true);
     }
 
     int get_char()
@@ -42,12 +51,14 @@ public:
     {
         switch (key)
         {
-            case 'S':
             case 's':
+            case 'S':
+            case KEY_DOWN:
                 highlight_ = wrap(highlight_ + 1, 0, N - 1);
                 break;
-            case 'W':
             case 'w':
+            case 'W':
+            case KEY_UP:
                 highlight_ = wrap(highlight_ - 1, 0, N - 1);
                 break;
             case 10:
@@ -77,18 +88,6 @@ private:
     {
         const size_t pos = (win_width_ - str.size()) / 2;
         mvwprintw(dialog_window_.get(), y0, pos, str.c_str());
-    }
-
-    void draw_items()
-    {
-        box(dialog_window_.get(), 0, 0);
-
-        draw_horz_line(dialog_window_.get(), 2, 0, win_width_, ACS_LTEE, ACS_HLINE, ACS_RTEE);
-
-        print_in_center(1, title_);
-
-        for (size_t i = 0; i < N; ++i)
-            mvwprintw(dialog_window_.get(), i + 3, 2, choices_[i].c_str());
     }
 
     size_t get_max_width() const

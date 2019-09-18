@@ -40,6 +40,8 @@ public:
     void quit();
 
 private:
+    void draw_background();
+
     state_type cur_state_;
     std::optional<state_type> prev_state_;
     bool is_running_;
